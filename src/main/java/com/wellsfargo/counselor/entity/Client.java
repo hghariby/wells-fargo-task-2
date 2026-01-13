@@ -1,19 +1,23 @@
 package com.wellsfargo.counselor.entity;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import java.util.Set;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 
 @Entity
-public class Advisor {
-
+public class Client {
     @Id
     @GeneratedValue()
-    private Long advisorId;
+    private Long clientId;
+      
+    @ManyToOne(optional=false)
+    @JoinColumn (name = "advisorId",  nullable = false, unique = true)
+    private Advisor advisor;
 
     @Column(nullable = false)
     private String firstName;
@@ -29,25 +33,23 @@ public class Advisor {
 
     @Column(nullable = false)
     private String email;
+    
+    @OneToOne (mappedBy = "clientId")
+    private Portfolio portfolio;
 
-     @OneToMany(mappedBy = "advisorId")
-     private Set<Client> clients;
+    protected Client() {} 
 
-    protected Advisor() {
-
-    }
-
-    public Advisor(String firstName, String lastName, String address, String phone, String email, Set<Client> clients) {
+    public Client(String firstName, String lastName, String address, String phone, String email, Advisor advisor) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.address = address;
         this.phone = phone;
         this.email = email;
-        this.clients =clients;
+        this.advisor =advisor;
     }
 
-    public Long getAdvisorId() {
-        return advisorId;
+    public Long getClientId() {
+        return clientId;
     }
 
     public String getFirstName() {
@@ -90,17 +92,19 @@ public class Advisor {
         this.email = email;
     }
 
-    public Set<Client> getClients() {
-        return clients;
-    }
-    public void setClients(Set<Client> clients) {
-        this.clients = clients;
+    public Advisor getAdvisor() {
+        return advisor;
     }
 
-    public void addClient(Client client) {
-        this.clients.add(client);
-        client.setAdvisor(this);
+    public void setAdvisor(Advisor advisor) {
+        this.advisor = advisor;
     }
 
+    public Portfolio getPortfolio(){
+        return portfolio;
+    }
 
+    public void setPortfolio(Portfolio portfolio){
+        this.portfolio = portfolio;
+    }
 }
